@@ -1,24 +1,17 @@
-
-import sys
-T = int(input())
-answer = []
-for i in range(T):
-    arr1 = []
-    arr2 = []
-    N = int(input())
-    for _ in range(N):
-        a, b = map(int, sys.stdin.readline().strip().split())
-        flag = True
-        for j in range(len(arr1)):
-            if a < arr1[j] and b < arr2[j]:
-                arr1.remove(arr1[j])
-                arr2.remove(arr2[j])
-            elif a > arr1[j] and b > arr2[j]:
-                flag = False
-        if flag:
-            arr1.append(a)
-            arr2.append(b)
-    answer.append(len(arr1))
-
-for i in range(T):
-    print(answer[i])
+N = int(input())
+arr = list(map(int, input().split()))
+arr.sort(reverse=True)
+s = sum(arr)
+for i in range(1, sum(arr)+1):
+    a = i
+    p = 0
+    flag = True
+    for j in arr:
+        if a >= j:
+            a -= j
+        if a == 0:
+            flag = False
+            break
+    if flag:
+        print(i)
+        break

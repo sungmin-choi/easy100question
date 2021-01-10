@@ -86,3 +86,118 @@ for i in range(T):
 
 for i in range(T):
     print(answer[i])
+
+# 1339
+
+N = int(input())
+array = []
+alphabet = [0]*26
+answer = 0
+for _ in range(N):
+    array.append(input())
+
+for word in array:
+    for i in range(len(word)):
+        alphabet[ord(word[i])-65] += 10**(len(word)-i-1)
+
+alphabet.sort(reverse=True)
+
+count = 9
+for i in alphabet:
+    if i == 0:
+        break
+    else:
+        answer += i*count
+        count -= 1
+
+print(answer)
+
+# 1138
+N = int(input())
+INF = 9999
+array = list(map(int, input().split()))
+answer = [INF]*N
+
+c = 1
+cnt = 0
+for i in array:
+    for j in range(N):
+
+        if cnt == i and answer[j] == INF:
+            answer[j] = c
+            break
+        if answer[j] > c:
+            cnt += 1
+    c += 1
+    cnt = 0
+
+for i in answer:
+    print(i, end=" ")
+# 1744
+N = int(input())
+
+array = []
+plus = []
+minus = []
+for _ in range(N):
+    array.append(int(input()))
+
+array.sort(reverse=True)
+for i in array:
+    if i > 1:
+        plus.append(i)
+    else:
+        minus.append(i)
+
+plus.sort(reverse=True)
+minus.sort()
+answer = 0
+i = 0
+while i < len(plus):
+    if plus[i] > 1 and i+1 < len(plus) and plus[i+1] > 1:
+        answer += plus[i]*plus[i+1]
+        i += 2
+    else:
+        answer += plus[i]
+        i += 1
+i = 0
+while i < len(minus):
+    if minus[i] < 0 and i+1 < len(minus) and minus[i+1] < 0:
+        answer += minus[i]*minus[i+1]
+        i += 2
+    elif minus[i] < 0 and i+1 < len(minus) and minus[i+1] == 0:
+        answer += minus[i]*minus[i+1]
+        i += 2
+    else:
+        answer += minus[i]
+        i += 1
+
+print(answer)
+
+# 4796
+
+arr2 = []
+arr = []
+flag = True
+while flag:
+    L, P, V = map(int, input().split())
+    if L == 0 and P == 0 and V == 0:
+        flag = False
+    else:
+        arr.append([L, P, V])
+
+for l, p, v in arr:
+    answer = 0
+    answer += (v//p)*l
+    v = v-(v//p)*p
+    if v < l:
+        answer += v
+    else:
+        answer += l
+    arr2.append(answer)
+
+for i in range(len(arr2)):
+    print("Case "+str(i+1)+": "+str(arr2[i]))
+
+
+# 2437

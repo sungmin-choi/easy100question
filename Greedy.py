@@ -1,4 +1,5 @@
 # bj2839
+import heapq
 import sys
 a = int(input())
 answer = 0
@@ -201,3 +202,83 @@ for i in range(len(arr2)):
 
 
 # 2437
+# 개인적으로 어려웠음 이런 계산 방법 떠오르지 않았다 다시끔 되새김질 하길
+n = int(input())
+s = list(map(int, input().split()))
+s.sort()
+num = 1
+for i in range(n):
+    if num < s[i]:
+        break
+    num += s[i]
+print(num)
+
+# 1783
+N, M = map(int, sys.stdin.readline().split())
+answer = 1
+if N == 1:
+    answer = 1
+if N == 2:
+    if M >= 7:
+        answer = 4
+    else:
+        answer = 1+(M-1)//2
+if N >= 3 and M == 1:
+    answer = 1
+if N >= 3 and M == 2:
+    answer = 2
+if N >= 3 and M == 3:
+    answer = 3
+if N >= 3 and M >= 4:
+    if M < 7:
+        answer = 4
+    elif M >= 7:
+        answer = M-2
+
+print(answer)
+
+# 1449
+N, L = map(int, input().split())
+
+arr = list(map(int, input().split()))
+
+arr.sort()
+i = 0
+answer = 1
+c = arr[0]
+while i < N:
+    if L >= arr[i]+1-c:
+        i += 1
+    else:
+        c = arr[i]
+        answer += 1
+        i += 1
+
+print(answer)
+
+# 1202
+N, K = map(int, input().split())
+gem = []
+for _ in range(N):
+    weight, value = map(int, sys.stdin.readline().split())
+    heapq.heappush(gem, [weight, value])
+bag = []
+for _ in range(K):
+    capacity = int(sys.stdin.readline())
+    heapq.heappush(bag, capacity)
+
+answer = 0
+capable_gem = []
+for _ in range(K):
+    capacity = heapq.heappop(bag)
+    while gem and capacity >= gem[0][0]:
+        [weight, value] = heapq.heappop(gem)
+        heapq.heappush(capable_gem, -value)
+    if capable_gem:
+        answer -= heapq.heappop(capable_gem)
+    elif not gem:
+        break
+
+print(answer)
+
+# 1700

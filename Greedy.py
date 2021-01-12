@@ -282,3 +282,73 @@ for _ in range(K):
 print(answer)
 
 # 1700
+N, K = map(int, input().split())
+arr = list(map(int, input().split()))
+answer = 0
+arr2 = [0]*(K+1)
+arr3 = []
+for i in arr:
+    if arr2[i] == 0:
+        arr2[i] = arr.count(i)
+
+for i in arr:
+    if len(arr3) < N:
+        if i in arr3:
+            arr2[i] -= 1
+        else:
+            arr3.append(i)
+            arr2[i] -= 1
+    elif i in arr3:
+        arr2[i] -= 1
+    else:
+        p = arr3[0]
+        for j in range(len(arr3)):
+            if j+1 < len(arr3):
+                if arr2[p] > arr2[arr3[j+1]]:
+                    p = arr3[j+1]
+        x = arr3.index(p)
+        arr3[x] = i
+        arr2[i] -= 1
+        answer += 1
+
+print(answer)
+
+# 1439
+S = input()
+answer0 = 0
+answer1 = 0
+if int(S[0]) == 0:
+    answer1 = 1
+else:
+    answer0 = 1
+
+p = int(S[0])
+for i in range(1, len(S)):
+    if p == int(S[i]):
+        continue
+    else:
+        if int(S[i]) == 1:
+            p = 1
+            answer0 += 1
+        else:
+            p = 0
+            answer1 += 1
+answer = min(answer0, answer1)
+print(answer)
+
+# 2847
+N = int(input())
+arr = []
+for _ in range(N):
+    arr.append(int(input()))
+
+answer = 0
+for i in range(len(arr)-1, 0, -1):
+    if i-1 >= 0:
+        if arr[i] <= arr[i-1]:
+            while arr[i] <= arr[i-1]:
+                arr[i-1] -= 1
+                answer += 1
+print(answer)
+
+# 10775

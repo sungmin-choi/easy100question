@@ -1,4 +1,5 @@
 # bj2839
+from collections import deque
 import heapq
 import sys
 a = int(input())
@@ -352,3 +353,98 @@ for i in range(len(arr)-1, 0, -1):
 print(answer)
 
 # 10775
+G = int(input())
+P = int(input())
+parent = []
+for i in range(G+1):
+    parent.append(i)
+
+plane = []
+for _ in range(P):
+    plane.append(int(input()))
+
+
+def find_parent(parent, x):
+    if parent[x] != x:
+        parent[x] = find_parent(parent, parent[x])
+    return parent[x]
+
+
+def union(parent, x, y):
+    a = find_parent(parent, x)
+    b = find_parent(parent, y)
+    parent[a] = b
+
+
+answer = 0
+for i in plane:
+    x = find_parent(parent, i)
+    if x == 0:
+        break
+    union(parent, x, x-1)
+    answer += 1
+
+print(answer)
+
+# 13305
+N = int(input())
+distance = list(map(int, sys.stdin.readline().split()))
+q = []
+cityOil = list(map(int, sys.stdin.readline().split()))
+q = deque(cityOil)
+cheap = min(cityOil)
+a = sum(distance)
+answer = 0
+i = 0
+cost = q.popleft()
+while len(q) > 1:
+    cost2 = q.popleft()
+    if cost > cost2:
+        answer += cost*distance[i]
+        cost = cost2
+        i += 1
+    else:
+        answer += cost*distance[i]
+        i += 1
+answer += cost*distance[i]
+print(answer)
+
+# 1715
+
+N = int(input())
+answer = 0
+q = []
+for _ in range(N):
+    heapq.heappush(q, int(input()))
+p2 = 0
+p1 = 0
+answer = 0
+while len(q) > 1:
+    p1 = heapq.heappop(q)
+    if q:
+        p2 = heapq.heappop(q)
+        heapq.heappush(q, p1+p2)
+        answer += p1+p2
+    else:
+
+        heapq.heappush(q, p1)
+
+print(answer)
+# 2820
+N = int(input())
+seat = input()
+l = len(seat)
+answer = 1
+q = []
+q = deque(seat)
+while q:
+    s = q.popleft()
+    if s == "S":
+        answer += 1
+    elif s == "L":
+        q.popleft()
+        answer += 1
+if answer > l:
+    answer = l
+print(answer)
+# 2813

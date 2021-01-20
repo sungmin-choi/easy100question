@@ -1,46 +1,33 @@
 from collections import deque
-M, N, H = map(int, input().split())
-cube = [[]for i in range(N)]
-for i in range(H):
-    cube.append(i)
-    for j in range(N):
-        cube[i].append(list(map(int, input().split())))
-answer = 1
-dx = [-1, 0, 1, 0]
-dy = [0, 1, 0, -1]
+N = int(input())
+dy = [-2, -2, -1, -1, 2, 1, 2, 1]
+dx = [1, -1, 2, -2, -1, -2, 1, 2]
 
 
-def bfs(cube, h, y, x, answer):
+def bfs(graph, y, x):
     q = deque()
-    q.append((h, y, x))
+    q.append((y, x))
+    graph[y][x] = 0
     while q:
-        h, y, x = q.popleft()
-        answer = cube[h][y][x]+1
-        for i in range(4):
-            if y+dy[i] < 0 or y+dy[i] >= N or x+dx[i] < 0 or x+dx[i] >= M:
+        y, x = q.popleft()
+        step = graph[y][x] + 1
+        for i in range(8):
+            if y+dy[i] < 0 or y+dy[i] >= l or x+dx[i] < 0 or x+dx[i] >= l:
                 continue
-            if cube[h][y+dy[i]][x+dx[i]] == 0:
-                q.append((h, y+dy[i], x+dx[i]))
-                cube[h][y+dy[i]][x+dx[i]] = answer
-        if h+1 < H and cube[h+1][y][x] == 0:
-            q.append((h+1, y, x))
-            cube[h+1][y][x] = answer
-        if h-1 >= 0 and cube[h-1][y][x] == 0:
-            q.append((h-1, y, x))
-            cube[h-1][y][x] = answer
+            if graph[y+dy[i]][x+dx[i]] > step:
+                graph[y+dy[i]][x+dx[i]] = step
+                q.append((y+dy[i], x+dx[i]))
 
 
-for h in range(H):
-    for n in range(N):
-        for m in range(M):
-            if cube[h][n][m] == 1:
-                bfs(cube, h, n, m, answer)
+answer = []
+for i in range(N):
+    answer.append(0)
+    l = int(input())
+    graph = [[999]*l for _ in range(l)]
+    y, x = map(int, input().split())
+    sy, sx = map(int, input().split())
+    bfs(graph, y, x)
+    answer[-1] = graph[sy][sx]
 
-for h in range(H):
-    for n in range(N):
-        if 0 in cube[h][n]:
-            answer = 0
-            break
-        a = max(cube[h][n])
-        answer = max(a, answer)
-print(answer-1)
+for i in answer:
+    print(i)

@@ -1,4 +1,5 @@
 # 4963
+from copy import deepcopy
 from collections import deque
 answer = []
 
@@ -125,3 +126,112 @@ for h in range(H):
         a = max(cube[h][n])
         answer = max(a, answer)
 print(answer-1)
+
+# 10026
+N = int(input())
+graph1 = []
+graph2 = []
+arr = []
+for _ in range(N):
+    arr = list(input())
+    graph1.append(arr)
+
+graph2 = deepcopy(graph1)
+
+
+answer1 = 0
+answer2 = 0
+dy = [1, 0, -1, 0]
+dx = [0, 1, 0, -1]
+
+
+def dfs(graph, C, y, x):
+    q = deque()
+    q.append((y, x))
+    graph[y][x] = 'X'
+    while q:
+        y, x = q.popleft()
+
+        for i in range(4):
+            if y+dy[i] < 0 or y+dy[i] >= N or x+dx[i] < 0 or x+dx[i] >= N:
+                continue
+            if graph[y+dy[i]][x+dx[i]] == C:
+                q.append((y+dy[i], x+dx[i]))
+                graph[y+dy[i]][x+dx[i]] = 'X'
+
+
+def dfs2(graph, C, y, x):
+
+    q = deque()
+    q.append((y, x))
+    graph[y][x] = 'X'
+    while q:
+        y, x = q.popleft()
+        for i in range(4):
+            if y+dy[i] < 0 or y+dy[i] >= N or x+dx[i] < 0 or x+dx[i] >= N:
+                continue
+            if C == 'R' or C == 'G':
+                if graph2[y+dy[i]][x+dx[i]] == 'R' or graph2[y+dy[i]][x+dx[i]] == 'G':
+                    q.append((y+dy[i], x+dx[i]))
+                    graph2[y+dy[i]][x+dx[i]] = 'X'
+            if graph[y+dy[i]][x+dx[i]] == C:
+                q.append((y+dy[i], x+dx[i]))
+                graph2[y+dy[i]][x+dx[i]] = 'X'
+
+
+for i in range(N):
+    for j in range(N):
+        if graph1[i][j] == 'R':
+            dfs(graph1, 'R', i, j)
+            answer1 += 1
+        if graph1[i][j] == 'B':
+            dfs(graph1, 'B', i, j)
+            answer1 += 1
+        if graph1[i][j] == 'G':
+            dfs(graph1, 'G', i, j)
+            answer1 += 1
+        if graph2[i][j] == 'R':
+            dfs2(graph2, 'R', i, j)
+            answer2 += 1
+        if graph2[i][j] == 'B':
+            dfs2(graph2, 'B', i, j)
+            answer2 += 1
+        if graph2[i][j] == 'G':
+            dfs2(graph2, 'G', i, j)
+            answer2 += 1
+
+print(answer1, answer2)
+
+# 7562
+N = int(input())
+dy = [-2, -2, -1, -1, 2, 1, 2, 1]
+dx = [1, -1, 2, -2, -1, -2, 1, 2]
+
+
+def bfs(graph, y, x):
+    q = deque()
+    q.append((y, x))
+    graph[y][x] = 0
+    while q:
+        y, x = q.popleft()
+        step = graph[y][x] + 1
+        for i in range(8):
+            if y+dy[i] < 0 or y+dy[i] >= l or x+dx[i] < 0 or x+dx[i] >= l:
+                continue
+            if graph[y+dy[i]][x+dx[i]] > step:
+                graph[y+dy[i]][x+dx[i]] = step
+                q.append((y+dy[i], x+dx[i]))
+
+
+answer = []
+for i in range(N):
+    answer.append(0)
+    l = int(input())
+    graph = [[999]*l for _ in range(l)]
+    y, x = map(int, input().split())
+    sy, sx = map(int, input().split())
+    bfs(graph, y, x)
+    answer[-1] = graph[sy][sx]
+
+for i in answer:
+    print(i)

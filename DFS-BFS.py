@@ -1,4 +1,5 @@
 # 4963
+import heapq
 from copy import deepcopy
 from collections import deque
 answer = []
@@ -235,3 +236,136 @@ for i in range(N):
 
 for i in answer:
     print(i)
+# 16236
+N = int(input())
+size = 2
+answer = 0
+graph = []
+gmap = [[0]*N for _ in range(N)]
+for i in range(N):
+    arr = list(map(int, input().split()))
+    graph.append(arr)
+    if 9 in arr:
+        x = arr.index(9)
+        y = i
+dy = [1, 0, -1, 0]
+dx = [0, -1, 0, 1]
+
+
+def min_step(graph, gmap, y, x):
+    q = deque()
+    q.append((y, x))
+    gmap[y][x] = 1000
+    while q:
+        y, x = q.popleft()
+        if gmap[y][x] == 1000:
+            step = 1
+        else:
+            step = gmap[y][x]+1
+        for i in range(4):
+            if x+dx[i] >= N or x+dx[i] < 0 or y+dy[i] >= N or y+dy[i] < 0:
+                continue
+            if graph[y+dy[i]][x+dx[i]] <= size and gmap[y+dy[i]][x+dx[i]] == 0:
+                gmap[y+dy[i]][x+dx[i]] = step
+                q.append((y+dy[i], x+dx[i]))
+
+
+hq = []
+stack = 0
+min_step(graph, gmap, y, x)
+graph[y][x] = 0
+while 1:
+    for i in range(N):
+        for j in range(N):
+            if graph[i][j] < size and graph[i][j] != 0 and gmap[i][j] != 0:
+                step = gmap[i][j]
+                heapq.heappush(hq, (step, i, j))
+    if len(hq) == 0:
+        print(answer)
+        break
+    step, ny, nx = heapq.heappop(hq)
+    answer += step
+    while hq:
+        heapq.heappop(hq)
+
+    stack += 1
+    graph[ny][nx] = 1000
+    if size == stack:
+        size += 1
+        stack = 0
+
+    gmap = [[0]*N for _ in range(N)]
+    min_step(graph, gmap, ny, nx)
+    graph[ny][nx] = 0
+# 3055
+R, C = map(int, input().split())
+graph = []
+wq = []
+wy = True
+wx = True
+wq = deque()
+for i in range(R):
+    arr = list(input())
+    if '*' in arr:
+        for j in range(len(arr)):
+            if arr[j] == '*':
+                wy = i
+                wx = j
+                wq.append((wy, wx))
+    if 'S' in arr:
+        y = i
+        x = arr.index('S')
+    if 'D' in arr:
+        fy = i
+        fx = arr.index('D')
+    graph.append(arr)
+dy = [1, 0, -1, 0]
+dx = [0, 1, 0, -1]
+
+q = []
+
+
+def bfs(graph, y, x):
+    q = deque()
+    q.append((y, x))
+    step = 0
+    flag = False
+    while q or wq:
+        for _ in range(len(wq)):
+            wy, wx = wq.popleft()
+            for i in range(4):
+                py = wy+dy[i]
+                px = wx+dx[i]
+                if py < 0 or px < 0 or py >= R or px >= C:
+                    continue
+                # if graph[py][px] == 'S':
+                   ## graph[py][px] = '*'
+                    ##flag = True
+                if graph[py][px] == '.':
+                    graph[py][px] = '*'
+                    wq.append((py, px))
+        if flag:
+            break
+        for _ in range(len(q)):
+            y, x = q.popleft()
+            if graph[y][x] == 'S':
+                graph[y][x] = int(0)
+                step = 1
+            else:
+                step = graph[y][x] + 1
+            for i in range(4):
+                py = y+dy[i]
+                px = x+dx[i]
+                if py < 0 or px < 0 or py >= R or px >= C:
+                    continue
+                if graph[py][px] == '.' or graph[py][px] == 'D':
+                    graph[py][px] = step
+                    q.append((py, px))
+
+
+bfs(graph, y, x)
+
+if graph[fy][fx] == 'D':
+    print('KAKTUS')
+else:
+    print(graph[fy][fx])

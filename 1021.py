@@ -1,33 +1,72 @@
 from collections import deque
-N = int(input())
-dy = [-2, -2, -1, -1, 2, 1, 2, 1]
-dx = [1, -1, 2, -2, -1, -2, 1, 2]
+R, C = map(int, input().split())
+graph = []
+wq = []
+wy = True
+wx = True
+wq = deque()
+for i in range(R):
+    arr = list(input())
+    if '*' in arr:
+        for j in range(len(arr)):
+            if arr[j] == '*':
+                wy = i
+                wx = j
+                wq.append((wy, wx))
+    if 'S' in arr:
+        y = i
+        x = arr.index('S')
+    if 'D' in arr:
+        fy = i
+        fx = arr.index('D')
+    graph.append(arr)
+dy = [1, 0, -1, 0]
+dx = [0, 1, 0, -1]
+
+q = []
 
 
 def bfs(graph, y, x):
     q = deque()
     q.append((y, x))
-    graph[y][x] = 0
-    while q:
-        y, x = q.popleft()
-        step = graph[y][x] + 1
-        for i in range(8):
-            if y+dy[i] < 0 or y+dy[i] >= l or x+dx[i] < 0 or x+dx[i] >= l:
-                continue
-            if graph[y+dy[i]][x+dx[i]] > step:
-                graph[y+dy[i]][x+dx[i]] = step
-                q.append((y+dy[i], x+dx[i]))
+    step = 0
+    flag = False
+    while q or wq:
+        for _ in range(len(wq)):
+            wy, wx = wq.popleft()
+            for i in range(4):
+                py = wy+dy[i]
+                px = wx+dx[i]
+                if py < 0 or px < 0 or py >= R or px >= C:
+                    continue
+                # if graph[py][px] == 'S':
+                   ## graph[py][px] = '*'
+                    ##flag = True
+                if graph[py][px] == '.':
+                    graph[py][px] = '*'
+                    wq.append((py, px))
+        if flag:
+            break
+        for _ in range(len(q)):
+            y, x = q.popleft()
+            if graph[y][x] == 'S':
+                graph[y][x] = int(0)
+                step = 1
+            else:
+                step = graph[y][x] + 1
+            for i in range(4):
+                py = y+dy[i]
+                px = x+dx[i]
+                if py < 0 or px < 0 or py >= R or px >= C:
+                    continue
+                if graph[py][px] == '.' or graph[py][px] == 'D':
+                    graph[py][px] = step
+                    q.append((py, px))
 
 
-answer = []
-for i in range(N):
-    answer.append(0)
-    l = int(input())
-    graph = [[999]*l for _ in range(l)]
-    y, x = map(int, input().split())
-    sy, sx = map(int, input().split())
-    bfs(graph, y, x)
-    answer[-1] = graph[sy][sx]
+bfs(graph, y, x)
 
-for i in answer:
-    print(i)
+if graph[fy][fx] == 'D':
+    print('KAKTUS')
+else:
+    print(graph[fy][fx])

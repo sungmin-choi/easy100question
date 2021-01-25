@@ -369,3 +369,4 @@ if graph[fy][fx] == 'D':
     print('KAKTUS')
 else:
     print(graph[fy][fx])
+dd

@@ -1,72 +1,62 @@
+import sys
 from collections import deque
-R, C = map(int, input().split())
+N, M = map(int, sys.stdin.readline().split())
 graph = []
-wq = []
-wy = True
-wx = True
-wq = deque()
-for i in range(R):
-    arr = list(input())
-    if '*' in arr:
-        for j in range(len(arr)):
-            if arr[j] == '*':
-                wy = i
-                wx = j
-                wq.append((wy, wx))
-    if 'S' in arr:
-        y = i
-        x = arr.index('S')
-    if 'D' in arr:
-        fy = i
-        fx = arr.index('D')
-    graph.append(arr)
-dy = [1, 0, -1, 0]
-dx = [0, 1, 0, -1]
+pq = deque()
+graph2 = [[0]*M for _ in range(N)]
+for _ in range(N):
+    graph.append(list(map(int, sys.stdin.readline().split())))
 
-q = []
+dx = [1, -1, 0, 0]
+dy = [0, 0, 1, -1]
+
+num = 1
 
 
-def bfs(graph, y, x):
+def bfs(y, x, graph2, num):
     q = deque()
     q.append((y, x))
-    step = 0
-    flag = False
-    while q or wq:
-        for _ in range(len(wq)):
-            wy, wx = wq.popleft()
-            for i in range(4):
-                py = wy+dy[i]
-                px = wx+dx[i]
-                if py < 0 or px < 0 or py >= R or px >= C:
-                    continue
-                # if graph[py][px] == 'S':
-                   ## graph[py][px] = '*'
-                    ##flag = True
-                if graph[py][px] == '.':
-                    graph[py][px] = '*'
-                    wq.append((py, px))
-        if flag:
-            break
-        for _ in range(len(q)):
-            y, x = q.popleft()
-            if graph[y][x] == 'S':
-                graph[y][x] = int(0)
-                step = 1
-            else:
-                step = graph[y][x] + 1
-            for i in range(4):
-                py = y+dy[i]
-                px = x+dx[i]
-                if py < 0 or px < 0 or py >= R or px >= C:
-                    continue
-                if graph[py][px] == '.' or graph[py][px] == 'D':
-                    graph[py][px] = step
-                    q.append((py, px))
+    while q:
+        y, x = q.popleft()
+        graph2[y][x] = num
+        for i in range(4):
+            Y, X = y+dy[i], x+dx[i]
+            if Y < 0 or Y >= N or X < 0 or X >= M:
+                continue
+            if graph[Y][X] != 0 and graph2[Y][X] == 0:
+                graph2[Y][X] = num
+                q.append((Y, X))
 
 
-bfs(graph, y, x)
+answer = 0
+while num == 1:
+    for i in range(N):
+        for j in range(M):
+            if graph[i][j] != 0:
+                t = 0
+                for k in range(4):
+                    y, x = i+dy[k], j+dx[k]
+                    if y < 0 or y >= N or x < 0 or x >= M:
+                        continue
+                    if graph[y][x] == 0:
+                        t += 1
+                pq.append((i, j, t))
+    while pq:
+        y, x, t = pq.popleft()
+        if graph[y][x] >= t:
+            graph[y][x] -= t
+        else:
+            graph[y][x] = 0
 
-if graph[fy][fx] == 'D':
-    print('KAKTUS')
+    answer += 1
+    for i in range(N):
+        for j in range(M):
+            if graph[i][j] != 0 and graph2[i][j] == 0:
+                bfs(i, j, graph2, num)
+                num += 1
+    num -= 1
+    graph2 = [[0]*M for _ in range(N)]
+if num == 0:
+    print(0)
 else:
-    print(graph[fy][fx])
+    print(answer)

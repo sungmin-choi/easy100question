@@ -1,10 +1,36 @@
-for i in range(R):
-    for j in range(C):
-        graph2.append([i, j])
-        for k in range(4):
-            y, x = i+dy[k], j+dx[k]
-            if y >= R or x >= C or y < 0 or x < 0:
-                continue
-            graph2[-1].append(graph[y][x])
-answer = 1
-def dfs(graph2, stack):
+import sys
+def input(): return sys.stdin.readline().strip()
+
+
+answer = []
+t = int(input())
+for _ in range(t):
+    p = input()
+    n = int(input())
+    de = input()[1:-1].split(',')
+    p = p.replace('RR', '')
+    r = 1
+    f, b = 0, 0
+    for i in p:
+        if i == 'R':
+            r = -r
+        elif i == 'D':
+            if r == 1:
+                f += 1
+            else:
+                b += 1
+    if f+b <= n:
+        de = de[f:n-b]
+
+        if r == 1:
+            str = "["+','.join(de)+"]"
+            answer.append(str)
+        else:
+            str = "["+','.join(de[::-1])+"]"
+            answer.append(str)
+    else:
+        answer.append("error")
+
+
+for i in answer:
+    print(i)

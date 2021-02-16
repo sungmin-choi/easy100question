@@ -1,3 +1,6 @@
+from itertools import combinations
+import copy
+from copy import deepcopy
 import heapq
 from collections import deque
 import sys
@@ -439,3 +442,269 @@ while flag:
                     flag = False
 
 print(answer)
+
+# 15683
+
+
+def input(): return sys.stdin.readline().strip()
+
+
+answer = 9999999
+dy = [0, 0, -1, 1]
+dx = [1, -1, 0, 0]
+di = [0, [[0], [1], [2], [3]], [[0, 1], [2, 3]], [
+    [0, 2], [0, 3], [1, 3], [1, 2]], [[0, 1, 2], [0, 1, 3]], [[0, 1, 2, 3]]]
+
+
+def dfs(start, graph, cctv):
+    global answer
+    if start == len(cctv):
+        count = 0
+        for i in range(N):
+            count += graph[i].count(0)
+        answer = min(answer, count)
+        return
+    else:
+
+        y, x, num = cctv[start]
+        for k in di[num]:
+            temp = deepcopy(graph)
+            for i in k:
+                ny = y+dy[i]
+                nx = x+dx[i]
+                while N > ny >= 0 and M > nx >= 0:
+                    if temp[ny][nx] == 6:
+                        break
+                    elif temp[ny][nx] == 0:
+                        temp[ny][nx] = '#'
+                    ny += dy[i]
+                    nx += dx[i]
+            dfs(start+1, temp, cctv)
+
+
+graph = []
+N, M = map(int, input().split())
+cctv = []
+for i in range(N):
+    arr = list(map(int, input().split()))
+    for j in range(M):
+        if arr[j] not in [0, 6]:
+            cctv.append((i, j, arr[j]))
+    graph.append(arr)
+
+dfs(0, graph, cctv)
+print(answer)
+
+
+input = sys.stdin.readline
+
+
+dy = [-1, 1, 0, 0]
+dx = [0, 0, -1, 1]
+di = [0, [[0], [1], [2], [3]], [[0, 1], [2, 3]], [[1, 2], [1, 3], [0, 2],
+                                                  [0, 3]], [[0, 1, 2], [0, 1, 3], [0, 2, 3], [1, 2, 3]], [[0, 1, 2, 3]]]
+
+MIN = 9999999999999999
+
+
+def dfs(start, MAP, cctv):
+    global MIN
+    if start == len(cctv):
+        cnt = 0
+        for y in range(0, row):
+            for x in range(0, col):
+                if MAP[y][x] == 0:
+                    cnt += 1
+        MIN = min(MIN, cnt)
+        return
+
+    num, y, x = cctv[start]
+    for dir in di[num]:
+        tmp = copy.deepcopy(MAP)
+        for i in dir:
+            ny, nx = y+dy[i], x+dx[i]
+            while row > ny >= 0 and col > nx >= 0:
+                if tmp[ny][nx] == 6:
+                    break
+                elif tmp[ny][nx] == 0:
+                    tmp[ny][nx] = '#'
+                ny += dy[i]
+                nx += dx[i]
+        dfs(start+1, tmp, cctv)
+
+
+if __name__ == "__main__":
+    row, col = map(int, input().split())
+    MAP = [list(map(int, input().split())) for _ in range(row)]
+    cctv = []
+
+    for y in range(0, row):
+        for x in range(0, col):
+            if MAP[y][x] not in [0, 6]:
+                cctv.append([MAP[y][x], y, x])
+
+    dfs(0, MAP, cctv)
+    print(MIN)
+
+    # 3190
+    import sys
+
+
+def input(): return sys.stdin.readline().strip()
+
+
+apple = []
+snake = [[0, 0]]
+N = int(input())
+map = [[0]*N for _ in range(N)]
+K = int(input())
+
+for _ in range(K):
+    a, b = input().split()
+    apple.append((int(a)-1, int(b)-1))
+
+ride = deque()
+L = int(input())
+
+for _ in range(L):
+    x, c = input().split()
+    ride.append((int(x), c))
+
+
+dy = [0, -1, 0, 1]
+dx = [1, 0, -1, 0]
+d = 0
+time = 0
+flag = True
+flag2 = True
+while True:
+    if flag:
+        if ride:
+            t, c = ride.popleft()
+            flag = False
+    y, x = snake[-1]
+    nx = x+dx[d]
+    ny = y+dy[d]
+    flag2 = True
+    if 0 <= nx < N and 0 <= ny < N:
+        if [ny, nx] not in snake:
+            for i in range(len(apple)):
+                if ny == apple[i][0] and nx == apple[i][1]:
+                    snake.append([ny, nx])
+                    apple.remove((ny, nx))
+                    flag2 = False
+                    break
+            if flag2:
+                snake.append([ny, nx])
+                snake.remove(snake[0])
+        else:
+            break
+    else:
+        break
+    time += 1
+    if time == t:
+        if c == 'L':
+            if d == 3:
+                d = 0
+            else:
+                d += 1
+        elif c == 'D':
+            if d == 0:
+                d = 3
+            else:
+                d -= 1
+        flag = True
+
+print(time+1)
+
+# 15686
+
+
+def input(): return sys.stdin.readline().strip()
+
+
+N, M = map(int, input().split())
+home = []  # 집 좌표 저장 리스트
+chicken = []  # 치킨집 좌표 저장 리스트
+for i in range(N):
+    arr = list(map(int, input().split()))
+    for j in range(N):
+        if arr[j] == 1:
+            home.append((i+1, j+1))
+        elif arr[j] == 2:
+            chicken.append((i+1, j+1))
+candidates = list(combinations(chicken, M))
+answer = 1e9
+for candidate in candidates:
+    result = 0
+    for hy, hx in home:
+        temp = 1e9
+        for cy, cx in candidate:
+            temp = min(temp, abs(hy-cy)+abs(hx-cx))
+        result += temp
+    answer = min(result, answer)
+
+print(answer)
+# 14499
+
+
+def tcube(s, cube):
+    if s == 1 or s == 2:
+        temp1 = cube[1][2]
+        temp2 = cube[1][1]
+        temp3 = cube[1][0]
+        temp4 = cube[3][1]
+        if s == 1:
+            cube[3][1] = temp1
+            cube[1][1] = temp3
+            cube[1][0] = temp4
+            cube[1][2] = temp2
+        else:
+            cube[3][1] = temp3
+            cube[1][1] = temp1
+            cube[1][0] = temp2
+            cube[1][2] = temp4
+    if s == 3 or s == 4:
+        temp1 = cube[0][1]
+        temp2 = cube[1][1]
+        temp3 = cube[2][1]
+        temp4 = cube[3][1]
+        if s == 3:
+            cube[0][1] = temp2
+            cube[1][1] = temp3
+            cube[2][1] = temp4
+            cube[3][1] = temp1
+        else:
+            cube[0][1] = temp4
+            cube[1][1] = temp1
+            cube[2][1] = temp2
+            cube[3][1] = temp3
+
+
+def input(): return sys.stdin.readline().strip()
+
+
+n, m,  y, x, step = map(int, input().split())
+cube = [[0]*3 for _ in range(4)]
+graph = []
+
+graph = [list(map(int, input().split())) for _ in range(n)]
+arr = list(map(int, input().split()))
+stepq = deque(arr)
+temp1, temp2, temp3, temp4 = 0, 0, 0, 0
+dy = [0, 0, -1, 1]
+dx = [1, -1, 0, 0]
+while stepq:
+    s = stepq.popleft()
+    ny = y+dy[s-1]
+    nx = x+dx[s-1]
+    if 0 <= ny < n and 0 <= nx < m:
+        tcube(s, cube)
+        if graph[ny][nx] == 0:
+            graph[ny][nx] = cube[3][1]
+        else:
+            cube[3][1] = graph[ny][nx]
+            graph[ny][nx] = 0
+        y = ny
+        x = nx
+        print(cube[1][1])

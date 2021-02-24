@@ -708,3 +708,183 @@ while stepq:
         y = ny
         x = nx
         print(cube[1][1])
+
+
+# 14500
+
+
+def f1(x1, x2, x3, x4, y1, y2, y3, y4, n, m, answer):
+    X1, X2, X3, X4 = x1, x2, x3, x4
+    for i in range(n):
+        y1 += 1
+        y2 += 1
+        y3 += 1
+        y4 += 1
+        x1, x2, x3, x4 = X1, X2, X3, X4
+        if y1 >= n or y2 >= n or y3 >= n or y4 >= n:
+            break
+        for j in range(m):
+            x1 += 1
+            x2 += 1
+            x3 += 1
+            x4 += 1
+            if x4 >= m or x3 >= m or x2 >= m or x1 >= m:
+                break
+            temp = graph[y1][x1]+graph[y2][x2]+graph[y3][x3]+graph[y4][x4]
+            answer = max(answer, temp)
+    return answer
+
+
+def f2(y, x, answer):
+    y1, y2, y3, y4, y5, y6 = y-1, y-1, y-1, y, y, y
+    x1, x2, x3, x4, x5, x6 = x-2, x-1, x, x-2, x-1, x
+    temp = graph[y1][x1]+graph[y2][x2]+graph[y4][x4]+graph[y5][x5]
+    answer = max(answer, temp)
+    temp = graph[y6][x6]+graph[y2][x2]+graph[y3][x3]+graph[y5][x5]
+    answer = max(answer, temp)
+    temp = graph[y1][x1]+graph[y2][x2]+graph[y3][x3]+graph[y5][x5]
+    answer = max(answer, temp)
+    temp = graph[y6][x6]+graph[y2][x2]+graph[y4][x4]+graph[y5][x5]
+    answer = max(answer, temp)
+    temp = graph[y1][x1]+graph[y2][x2]+graph[y6][x6]+graph[y5][x5]
+    answer = max(answer, temp)
+    temp = graph[y4][x4]+graph[y2][x2]+graph[y3][x3]+graph[y5][x5]
+    answer = max(answer, temp)
+    temp = graph[y4][x4]+graph[y6][x6]+graph[y3][x3]+graph[y5][x5]
+    answer = max(answer, temp)
+    temp = graph[y4][x4]+graph[y6][x6]+graph[y1][x1]+graph[y5][x5]
+    answer = max(answer, temp)
+    temp = graph[y2][x2]+graph[y6][x6]+graph[y1][x1]+graph[y3][x3]
+    answer = max(answer, temp)
+    temp = graph[y2][x2]+graph[y4][x4]+graph[y1][x1]+graph[y3][x3]
+    answer = max(answer, temp)
+    return answer
+
+
+def f3(y, x, answer):
+    y1, y2, y3, y4, y5, y6 = y-2, y-2, y-1, y-1, y, y
+    x1, x2, x3, x4, x5, x6 = x-1, x, x-1, x, x-1, x
+    temp = graph[y1][x1]+graph[y2][x2]+graph[y3][x3]+graph[y4][x4]
+    answer = max(answer, temp)
+    temp = graph[y6][x6]+graph[y4][x4]+graph[y3][x3]+graph[y5][x5]
+    answer = max(answer, temp)
+
+    temp = graph[y1][x1]+graph[y2][x2]+graph[y3][x3]+graph[y5][x5]
+    answer = max(answer, temp)
+    temp = graph[y6][x6]+graph[y2][x2]+graph[y4][x4]+graph[y1][x1]
+    answer = max(answer, temp)
+    temp = graph[y4][x4]+graph[y2][x2]+graph[y6][x6]+graph[y5][x5]
+    answer = max(answer, temp)
+    temp = graph[y1][x1]+graph[y6][x6]+graph[y3][x3]+graph[y5][x5]
+    answer = max(answer, temp)
+
+    temp = graph[y4][x4]+graph[y1][x1]+graph[y3][x3]+graph[y5][x5]
+    answer = max(answer, temp)
+    temp = graph[y4][x4]+graph[y6][x6]+graph[y2][x2]+graph[y3][x3]
+    answer = max(answer, temp)
+
+    temp = graph[y4][x4]+graph[y6][x6]+graph[y1][x1]+graph[y3][x3]
+    answer = max(answer, temp)
+    temp = graph[y2][x2]+graph[y4][x4]+graph[y5][x5]+graph[y3][x3]
+    answer = max(answer, temp)
+    return answer
+
+
+def input(): return sys.stdin.readline().strip()
+
+
+n, m = map(int, input().split())
+
+graph = [list(map(int, input().split())) for _ in range(n)]
+answer = 0
+temp = 0
+x1, x2, x3, x4 = -1, 0, 1, 2
+y1, y2, y3, y4 = -1, -1, -1, -1
+answer = f1(x1, x2, x3, x4, y1, y2, y3, y4, n, m, answer)
+x1, x2, x3, x4 = -1, -1, -1, -1
+y1, y2, y3, y4 = -1, 0, 1, 2
+answer = f1(x1, x2, x3, x4, y1, y2, y3, y4, n, m, answer)
+
+for i in range(n):
+    y = i+1
+    if y < n:
+        for j in range(m):
+            x = j+2
+
+            if x < m:
+                answer = f2(y, x, answer)
+            else:
+                break
+    else:
+        break
+
+for i in range(n):
+    y = i+2
+    if y < n:
+        for j in range(m):
+            x = j+1
+
+            if x < m:
+                answer = f3(y, x, answer)
+            else:
+                break
+    else:
+        break
+
+
+print(answer)
+
+
+# 16234
+def input(): return sys.stdin.readline().strip()
+
+
+n, l, r = map(int, input().split())
+graph = [list(map(int, input().split())) for _ in range(n)]
+graph2 = [[0]*n for _ in range(n)]
+time = 0
+dy = [0, 1, 0, -1]
+dx = [1, 0, -1, 0]
+q = deque()
+answer = 0
+while True:
+    i, j = 0, 0
+    temp = 1
+    flag = True
+    arr = [0]
+    for i in range(n):
+        for j in range(n):
+            if graph2[i][j] == 0:
+                time = 1
+                sum1 = graph[i][j]
+                q.append((i, j))
+                while q:
+                    y, x = q.popleft()
+                    for k in range(4):
+                        ny = y+dy[k]
+                        nx = x+dx[k]
+                        if 0 <= ny < n and 0 <= nx < n:
+                            if l <= abs(graph[ny][nx]-graph[y][x]) <= r and graph2[ny][nx] == 0:
+                                q.append((ny, nx))
+                                graph2[y][x] = temp
+                                graph2[ny][nx] = temp
+                                sum1 += graph[ny][nx]
+                                time += 1
+                                flag = False
+                if flag:
+                    continue
+                else:
+                    arr.append(int(sum1/time))
+                    temp += 1
+    for i in range(n):
+        for j in range(n):
+            if graph2[i][j] != 0:
+                graph[i][j] = arr[graph2[i][j]]
+    graph2 = [[0]*n for _ in range(n)]
+
+    if flag:
+        break
+    answer += 1
+
+
+print(answer)

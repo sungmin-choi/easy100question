@@ -1,20 +1,44 @@
+from collections import deque
 
-numbers = [2, 20, 200]
-answer = ''
-maxl = len(str(max(numbers)))
-numbers = list(map(str, numbers))
-arr = []
-for i in range(len(numbers)):
-    l = maxl-len(numbers[i])
-    number = numbers[i]
-    for j in range(l):
-        number += number[0]
-    arr.append((number, i))
+begin = "hit"
+target = "cog"
+words = ["cog", "hot", "dot", "dog", "lot", "log", "hot"]
+answer = 0
+t = 1
+visited = [0]*len(words)
+begin = list(begin)
+q = deque()
+q.append((begin, 0))
+while q:
+    qword, t = q.popleft()
+    t = t+1
+    i = 0
+    i2 = 0
+    for idx, word in enumerate(words):
+        word = list(word)
 
-arr.sort(key=lambda x: -int(x[0]))
-for i in arr:
-    answer += str(numbers[i[1]])
-if answer[0] == "0":
-    answer = "0"
+        count = 0
+        count2 = 0
+        for c in word:
+            if c not in qword:
+                count += 1
+                i = idx
+        for c in qword:
+            if c not in word:
+                count2 += 1
+                i2 = idx
+        if count == 1:
+            if visited[i] == 0:
+                visited[i] = t
+                q.append((word, t))
+        elif count2 == 1:
+            if visited[i2] == 0:
+                visited[i2] = t
+                q.append((word, t))
 
+
+for i in range(len(words)):
+    if target == words[i]:
+        answer = visited[i]
+        break
 print(answer)
